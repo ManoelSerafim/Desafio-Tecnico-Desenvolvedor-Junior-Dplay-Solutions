@@ -6,8 +6,15 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const DEFAULT_DATA_PATH = path.resolve(__dirname, '..', '..', 'data', 'tasks.json');
 
+function getDataPath() {
+  if (process.env.TASK_DATA_PATH) {
+    return path.resolve(process.env.TASK_DATA_PATH);
+  }
+  return DEFAULT_DATA_PATH;
+}
+
 export class TaskRepository {
-  constructor(dataPath = DEFAULT_DATA_PATH) {
+  constructor(dataPath = getDataPath()) {
     this.dataPath = dataPath;
   }
 
