@@ -9,7 +9,7 @@ Aplicação CLI (Command Line Interface) para gerenciamento de tarefas com persi
 - **ES Modules** — Sistema de módulos nativo (`"type": "module"`)
 - **npm** — Gerenciador de pacotes e scripts
 - **JSON** — Persistência local de dados
-- **Node.js Test Runner (`node:test`)** — Testes automatizados sem dependências externas
+- **Jest** — Framework de testes automatizados
 
 ## Pré-requisitos
 - **Node.js >= 18.0.0** (versão LTS recomendada)
@@ -31,32 +31,68 @@ node src/cli.js help
 
 ## Testes
 ```bash
+# Executa todos os testes
 npm test
+
+# Executa testes com cobertura
+npm test -- --coverage
 ```
 
 ## Estrutura de Diretórios
 ```
 dplay-task-manager/
 ├── src/
-│   ├── cli.js              # Ponto de entrada da aplicação
-│   ├── services/           # Regras de negócio das tarefas (futuro)
-│   ├── repositories/       # Leitura/escrita do arquivo JSON (futuro)
-│   └── utils/              # Utilitários compartilhados (futuro)
-├── tests/                  # Testes automatizados
-├── data/                   # Arquivo de persistência local (criado automaticamente)
+│   ├── cli.js                     # Ponto de entrada da aplicação
+│   ├── services/
+│   │   └── taskService.js         # Regras de negócio das tarefas
+│   ├── repositories/
+│   │   └── taskRepository.js      # Leitura/escrita do arquivo JSON
+│   └── utils/                     # Utilitários compartilhados (futuro)
+├── tests/
+│   ├── repositories/
+│   │   └── taskRepository.test.js # Testes do repositório
+│   └── services/
+│       └── taskService.test.js    # Testes do serviço
+├── data/                          # Arquivo de persistência local (criado automaticamente)
 │   └── .gitkeep
 ├── .gitignore
+├── jest.config.js                 # Configuração do Jest
 ├── package.json
 ├── package-lock.json
 └── README.md
 ```
 
+## Arquitetura
+
+### Camada de Repositório (`src/repositories/taskRepository.js`)
+Responsável pela persistência dos dados em arquivo JSON.
+- Cria o arquivo automaticamente na primeira execução
+- Retorna lista vazia quando arquivo não existe
+- Trata JSON corrompido sem destruir dados originais
+- Permite injeção de caminho do arquivo para testes isolados
+
+### Camada de Serviço (`src/services/taskService.js`)
+Contém as regras de negócio do gerenciamento de tarefas.
+- Validação de descrição (não vazia, trim de espaços)
+- Geração de IDs únicos sequenciais (não reutilizados após exclusão)
+- Criação de tarefas com status `pending` e `createdAt` em ISO 8601
+- Operações: adicionar, listar, buscar por ID, concluir, remover
+
+### Modelo de Tarefa
+```json
+{
+  "id": 1,
+  "description": "Descrição da tarefa",
+  "status": "pending",
+  "createdAt": "2024-01-15T10:30:00.000Z"
+}
+```
+
 ## Status do Projeto
-> **Aviso:** Este projeto está na **Etapa 1 — Criação e organização do repositório**.  
-> As funcionalidades completas de gerenciamento de tarefas (adicionar, listar, concluir, remover, editar, filtrar) serão implementadas nas próximas etapas.  
-> Atualmente, apenas a estrutura base, configuração do projeto e testes de validação do CLI estão disponíveis.
+> **Aviso:** Este projeto está na **Etapa 2 — Persistência JSON, regras de negócio e testes com Jest**.  
+> A interface de comandos da CLI (adicionar, listar, concluir, remover via terminal) será implementada na próxima etapa.  
+> Atualmente, a lógica de negócio e persistência estão completas e testadas.
 
 ## Próximas Etapas
-1. **Etapa 2** — Implementação da persistência JSON e regras básicas de gerenciamento de tarefas
-2. **Etapa 3** — Funcionalidades completas do CLI e validações
-3. **Etapa 4** — Testes abrangentes e refinamentos
+1. **Etapa 3** — Implementar comandos da CLI para adicionar, listar, concluir, remover e exibir ajuda
+2. **Etapa 4** — Testes de integração da CLI e refinamentos
