@@ -1,0 +1,21 @@
+{
+  "name": "dplay-task-manager",
+  "version": "1.0.0",
+  "description": "Gerenciador de tarefas via terminal (CLI) - Desafio técnico Dplay Solutions",
+  "type": "module",
+  "main": "src/cli.js",
+  "scripts": {
+    "start": "node src/cli.js",
+    "test": "node --test tests/**/*.test.js"
+  },
+  "keywords": [
+    "cli",
+    "task-manager",
+    "terminal"
+  ],
+  "author": "",
+  "license": "ISC",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
