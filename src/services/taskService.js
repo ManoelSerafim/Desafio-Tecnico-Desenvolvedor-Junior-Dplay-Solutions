@@ -1,12 +1,5 @@
 import { taskRepository } from '../repositories/taskRepository.js';
 
-let idCounter = 0;
-
-function generateId() {
-  idCounter += 1;
-  return idCounter;
-}
-
 function validateDescription(description) {
   if (description === undefined || description === null) {
     throw new Error('Descrição é obrigatória');
@@ -18,9 +11,15 @@ function validateDescription(description) {
   return trimmed;
 }
 
-function createTaskObject(description) {
+async function generateId(repository) {
+  const tasks = await repository.read();
+  const maxId = tasks.reduce((max, task) => Math.max(max, task.id), 0);
+  return maxId + 1;
+}
+
+async function createTaskObject(description, repository) {
   return {
-    id: generateId(),
+    id: await generateId(repository),
     description: validateDescription(description),
     status: 'pending',
     createdAt: new Date().toISOString()
@@ -34,7 +33,7 @@ export class TaskService {
 
   async add(description) {
     const tasks = await this.repository.read();
-    const task = createTaskObject(description);
+    const task = await createTaskObject(description, this.repository);
     tasks.push(task);
     await this.repository.write(tasks);
     return task;
@@ -69,10 +68,6 @@ export class TaskService {
     const removed = tasks.splice(index, 1)[0];
     await this.repository.write(tasks);
     return removed;
-  }
-
-  resetIdCounter() {
-    idCounter = 0;
   }
 }
 

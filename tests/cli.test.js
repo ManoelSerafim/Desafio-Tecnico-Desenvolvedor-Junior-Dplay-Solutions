@@ -34,7 +34,6 @@ describe('CLI Integration', () => {
     await fs.mkdir(TEST_DATA_DIR, { recursive: true });
     repository = new TaskRepository(TEST_DATA_PATH);
     service = new TaskService(repository);
-    service.resetIdCounter();
   });
 
   afterEach(async () => {
